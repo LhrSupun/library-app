@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm start --prefix server",
     "dev": "concurrently --kill-others-on-fail \"npm run app --prefix server\" \"npm run dev --prefix client\"",
-    "server": "npm run app --prefix server"
+    "server": "npm run app --prefix server",
+    "client": "npm run dev --prefix client"
   },
   "author": "Lahiru Supun",
   "license": "ISC",
