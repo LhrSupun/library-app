@@ -1,4 +1,5 @@
 *.env
+nodemon.json
 Readme.md
 node_modules/
 dist/
