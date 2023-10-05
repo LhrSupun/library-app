@@ -1,4 +1,5 @@
 *.env
+Readme.md
 node_modules/
 dist/
 # Logs
