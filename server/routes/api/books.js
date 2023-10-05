@@ -1,80 +1,137 @@
-const express = require('express');
-const router = express.Router();
+const asyncHandler = require("express-async-handler");
+const { isObjectIdOrHexString } = require('mongoose');
 const seeds = require('../../books.json');
 
-// Load Book model
+// Load models
 const Book = require('../../models/Book');
+const Author = require('../../models/Author');
 
-// @route GET api/books/test
-// @description tests books route
-// @access Public
-router.get('/test', (req, res) => res.send('book route testing!'));
-
-// @route GET api/books/seed
+// @route GET books
 // @description seeds books to database
 // @access Public
-router.get('/seed', async (req, res) => {
-    try {
-        const data = seeds.books;
-        const shared = data.map(book => ({
-            isbn: book.isbn,
-            title: book.title,
-            author: `${book.author.split(' ').filter(Boolean)[0]} ${book.author.split(' ').filter(Boolean).slice(-1)[0]}`,
-            description: book.description
-        }))
-        res.json(shared);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Unable to seed books' })
+exports.index = asyncHandler(async (req, res, next) => {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = parseInt(req.query.perPage) || 10;
+    const books = await Book.aggregate([
+        {
+            $lookup: {
+                from: 'authors',
+                let: {
+                    author_id: '$author'
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ['$_id', '$$author_id']
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            fullName: { $concat: ['$first_name', ' ', '$last_name'] }
+                        }
+                    }
+                ],
+                as: 'author'
+            },
+        },
+        {
+            $unwind: '$author'
+        },
+        {
+            $project: {
+                name: 1,
+                name: 1,
+                isbn: 1,
+                description: 1,
+                author: "$author.fullName"
+            }
+        },
+        {
+            $skip: (page - 1) * perPage
+        },
+        {
+            $limit: perPage
+        }
+    ])
+
+    res.json(books);
+
+});
+
+exports.seeding = asyncHandler(async (req, res, next) => {
+    // empty collections
+    await Book.deleteMany({});
+    await Author.deleteMany({});
+    const data = seeds.books;
+    const author_data = data.map(book => ({
+        first_name: book.author.split(' ').filter(Boolean)[0],
+        last_name: book.author.split(' ').filter(Boolean).slice(-1)[0],
+    }));
+    const options = { ordered: true };
+    const result = await Author.insertMany(author_data, options);
+    const book_data = data.map(book => ({
+        isbn: book.isbn,
+        name: book.title,
+        author: result.find(r => r.fullName === book.author)?._id,
+        description: book.description
+    }));
+    const book_saved = await Book.insertMany(book_data, options);
+    console.log({ book_saved });
+    res.json({ success: true });
+});
+
+
+exports.book_detail = asyncHandler(async (req, res, next) => {
+    const bookId = req.params.id;
+    if (!isObjectIdOrHexString(bookId)) {
+        return res.status(400).json({ error: 'Invalid book ID' });
     }
+
+    const book = await Book.findById(bookId).select("name isbn description").populate({
+        path: 'author',
+        model: 'authors',
+        select: 'first_name last_name'
+    });
+
+    if (!book) {
+        return res.status(404).json({ error: 'Book not found' });
+    }
+
+    res.json({
+        name: book?.name,
+        isbn: book?.isbn,
+        description: book?.description,
+        author: book?.author?.fullName
+    });
 });
 
-
-// @route GET api/books
-// @description Get all books
-// @access Public
-router.get('/', (req, res) => {
-    Book.find()
-        .then(books => res.json(books))
-        .catch(err => res.status(404).json({ nobooksfound: 'No Books found' }));
+exports.book_create = asyncHandler(async (req, res, next) => {
+    const { name, isbn, author } = req.body;
+    if (!isObjectIdOrHexString(author)) {
+        return res.status(400).json({ error: 'Invalid Author ID' });
+    }
+    const book = new Book({
+        name, isbn, author
+    });
+    await book.save();
+    res.json({ success: true });
 });
 
-// @route GET api/books/:id
-// @description Get single book by id
-// @access Public
-router.get('/:id', (req, res) => {
-    Book.findById(req.params.id)
-        .then(book => res.json(book))
-        .catch(err => res.status(404).json({ nobookfound: 'No Book found' }));
-});
+exports.book_update = asyncHandler(async (req, res, next) => {
+    const bookId = req.params.id;
+    if (!isObjectIdOrHexString(bookId)) {
+        return res.status(400).json({ error: 'Invalid book ID' });
+    }
 
-// @route GET api/books
-// @description add/save book
-// @access Public
-router.post('/', (req, res) => {
-    Book.create(req.body)
-        .then(book => res.json({ msg: 'Book added successfully' }))
-        .catch(err => res.status(400).json({ error: 'Unable to add this book' }));
-});
+    const book = await Book.findByIdAndUpdate(bookId, req.body, { new: true });
 
-// @route GET api/books/:id
-// @description Update book
-// @access Public
-router.put('/:id', (req, res) => {
-    Book.findByIdAndUpdate(req.params.id, req.body)
-        .then(book => res.json({ msg: 'Updated successfully' }))
-        .catch(err =>
-            res.status(400).json({ error: 'Unable to update the Database' })
-        );
-});
+    if (!book) {
+        return res.status(404).json({ error: 'Book not found' });
+    }
 
-// @route GET api/books/:id
-// @description Delete book by id
-// @access Public
-router.delete('/:id', (req, res) => {
-    Book.findByIdAndRemove(req.params.id, req.body)
-        .then(book => res.json({ mgs: 'Book entry deleted successfully' }))
-        .catch(err => res.status(404).json({ error: 'No such a book' }));
-});
+    res.json({ success: true });
 
-module.exports = router;
+});

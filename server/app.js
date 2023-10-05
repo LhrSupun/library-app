@@ -1,6 +1,6 @@
 const express = require('express');
 const connectDB = require('./config/database');
-const books = require('./routes/api/books');
+const routes = require('./routes/api/routes');
 const cors = require('cors');
 const app = express()
 let port;
@@ -18,7 +18,8 @@ app.use(express.json({ extended: false }));
 app.get('/', (req, res) => {
   res.send('Hello World!')
 });
-app.use('/api/books', books);
+
+app.use('/', routes );
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

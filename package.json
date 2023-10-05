@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "npm start --prefix server",
-    "dev":"concurrently --kill-others-on-fail \"npm run app --prefix server\" \"npm run dev --prefix client\""
+    "dev": "concurrently --kill-others-on-fail \"npm run app --prefix server\" \"npm run dev --prefix client\"",
+    "server": "npm run app --prefix server"
   },
   "author": "Lahiru Supun",
   "license": "ISC",

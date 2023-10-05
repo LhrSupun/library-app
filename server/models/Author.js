@@ -6,7 +6,7 @@ const AuthorsSchema = new Schema({
         type: String,
         required: true
     },
-    first_name: {
+    last_name: {
         type: String,
         required: true
     },
@@ -24,4 +24,6 @@ const AuthorsSchema = new Schema({
         },
     });
 
-module.exports = Book = mongoose.model('authors', AuthorsSchema);
+AuthorsSchema.virtual('fullName').get(function () { return `${this.first_name} ${this.last_name ? this.last_name : ""}` })
+
+module.exports = Author = mongoose.model('authors', AuthorsSchema);
