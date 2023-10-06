@@ -4,10 +4,9 @@ import ShowBookList from './components/ShowBookList';
 import ShowBookDetails from './components/ShowBookDetails';
 import CreateBook from './components/CreateBook';
 import './App.css'
-import CreateAuthor from './components/CreateAuthor';
 import UpdateBookInfo from './components/UpdateBookInfo';
 import ShowAuthorsList from './components/ShowAuthorsList';
-import UpdateAuthorInfo from './components/UpdateAuthorInfo';
+import ManageAuthorInfo from './components/ManageAuthor';
 
 function App() {
   return (
@@ -17,11 +16,19 @@ function App() {
           <Route exact path='/' element={<ShowBookList />} />
           <Route exact path='/view-authors' element={<ShowAuthorsList />} />
           <Route path='/create-book' element={<CreateBook />} />
-          <Route path='/create-author' element={<CreateAuthor />} />
+          <Route path='/create-author' element={<ManageAuthorInfo />} />
           <Route path='/edit-book/:id' element={<UpdateBookInfo />} />
           <Route path='/show-book/:id' element={<ShowBookDetails />} />
-          <Route path='/edit-author/:id' element={<UpdateAuthorInfo />} />
-          <Route path='/*' element={<h1>Not Found</h1>} />
+          <Route path='/edit-author/:id' element={<ManageAuthorInfo />} />
+          <Route path='/*' element={
+            <div className="d-flex justify-content-center align-items-center vh-100">
+              <div>
+                <h1 style={{ textAlign: 'center', margin: 0, padding: '2rem' }}>
+                  404 - Page Not Found
+                </h1>
+              </div>
+            </div>
+          } />
         </Routes>
       </Router>
     </>
