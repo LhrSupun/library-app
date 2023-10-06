@@ -16,13 +16,14 @@ connectDB();
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ extended: false }));
 
-// app.get('/', (req, res) => {
-//   res.send('Hello World!')
-// });
 
 app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
 app.use('/', routes);
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', '404.html'));
+});
 
 app.listen(port, () => {
   console.log(`Library app listening on port ${port}`)

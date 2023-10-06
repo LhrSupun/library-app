@@ -7,6 +7,7 @@ import './App.css'
 import UpdateBookInfo from './components/UpdateBookInfo';
 import ShowAuthorsList from './components/ShowAuthorsList';
 import ManageAuthorInfo from './components/ManageAuthor';
+import PageNotFound from './components/PageNotFound';
 
 function App() {
   return (
@@ -20,15 +21,8 @@ function App() {
           <Route path='/edit-book/:id' element={<UpdateBookInfo />} />
           <Route path='/show-book/:id' element={<ShowBookDetails />} />
           <Route path='/edit-author/:id' element={<ManageAuthorInfo />} />
-          <Route path='/*' element={
-            <div className="d-flex justify-content-center align-items-center vh-100">
-              <div>
-                <h1 style={{ textAlign: 'center', margin: 0, padding: '2rem' }}>
-                  404 - Page Not Found
-                </h1>
-              </div>
-            </div>
-          } />
+          <Route path='/not-found' element={<PageNotFound />} />
+          <Route path='/*' element={<PageNotFound />} />
         </Routes>
       </Router>
     </>
