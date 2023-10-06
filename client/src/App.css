@@ -40,6 +40,27 @@
   grid-gap: 2em;
 }
 
-.card-container {
+/* .card-container {
   width: 250px;
+} */
+/* 
+.desc {
+  height: 130px;
+  padding: 10px;
 }
+
+.desc h2 {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+.desc h3,
+p {
+  font-weight: 300;
+}
+
+.desc h3 {
+  color: #6c757d;
+  font-size: 1em;
+  padding: 10px 0 10px 0;
+} */

@@ -29,7 +29,7 @@ exports.index = asyncHandler(async (req, res, next) => {
                     },
                     {
                         $project: {
-                            _id: 0,
+                            // _id: 0,
                             fullName: { $concat: ['$first_name', ' ', '$last_name'] }
                         }
                     }
@@ -46,7 +46,8 @@ exports.index = asyncHandler(async (req, res, next) => {
                 name: 1,
                 isbn: 1,
                 description: 1,
-                author: "$author.fullName"
+                author: "$author.fullName",
+                authorId:"$author._id"
             }
         },
         {
@@ -90,7 +91,7 @@ exports.book_detail = asyncHandler(async (req, res, next) => {
         return res.status(400).json({ error: 'Invalid book ID' });
     }
 
-    const book = await Book.findById(bookId).select("name isbn description").populate({
+    const book = await Book.findById(bookId).select("name isbn description author").populate({
         path: 'author',
         model: 'authors',
         select: 'first_name last_name'
@@ -104,7 +105,8 @@ exports.book_detail = asyncHandler(async (req, res, next) => {
         name: book?.name,
         isbn: book?.isbn,
         description: book?.description,
-        author: book?.author?.fullName
+        author: book?.author?.fullName,
+        authorId: book?.author?._id
     });
 });
 

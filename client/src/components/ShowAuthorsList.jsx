@@ -2,31 +2,31 @@ import React, { useState, useEffect } from 'react';
 import '../App.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import BookCard from './BookCard';
+import AuthorCard from './AuthorCard';
 
-function ShowBookList() {
-    const [books, setBooks] = useState([]);
+function ShowAuthorsList() {
+    const [authors, setAuthors] = useState([]);
 
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get('http://localhost:5000/books?page=1&perPage=20', {
+            .get('http://localhost:5000/authors?page=1&perPage=20', {
                 signal: controller.signal,
             })
             .then((res) => {
-                setBooks(res.data);
+                setAuthors(res.data);
             })
-            .catch((err) => {
-                console.log({ err });
-                console.log('Error from ShowBookList');
+            .catch((ShowAuthorsList) => {
+                console.log({ ShowAuthorsList });
+                console.log('Error from ShowAuthorsList');
             });
         return () => controller.abort();
     }, []);
 
-    const bookList =
-        books.length === 0
-            ? 'there is no book record!'
-            : books.map((book, k) => <BookCard book={book} key={k} />);
+    const authorsList =
+        authors.length === 0
+            ? 'there is no author record!'
+            : authors.map((author, k) => <AuthorCard author={author} key={k} />);
 
     return (
         <div className='ShowBookList'>
@@ -34,7 +34,7 @@ function ShowBookList() {
                 <div className='row'>
                     <div className='col-md-12'>
                         <br />
-                        <h2 className='display-4 text-center'>Books List</h2>
+                        <h2 className='display-4 text-center'>Authors List</h2>
                     </div>
 
                     <div className='col-md-11'>
@@ -57,10 +57,10 @@ function ShowBookList() {
                             </div>
                             <div className='col-md-2'>
                                 <Link
-                                    to='/view-authors'
+                                    to='/'
                                     className='btn btn-outline-light float-right'
                                 >
-                                    Authors List
+                                    Books List
                                 </Link>
                             </div>
                         </div>
@@ -70,10 +70,10 @@ function ShowBookList() {
                     </div>
                 </div>
 
-                <div className='list'>{bookList}</div>
+                <div className='list'>{authorsList}</div>
             </div>
         </div>
     );
 }
 
-export default ShowBookList;
+export default ShowAuthorsList;

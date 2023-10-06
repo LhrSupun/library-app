@@ -1,19 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../App.css';
+import bookLogo from '../assets/book.jpg';
 
 const BookCard = (props) => {
     const book = props.book;
 
     return (
-        <div className='card-container'>
+        <div className='card'>
             <img
-                src='https://images.unsplash.com/photo-1495446815901-a7297e633e8d'
+                src={bookLogo}
                 alt='Books'
                 height={200}
                 className='card-img-top'
             />
-            <div className='desc'>
+            <div className='card-body text-center text-dark bg-light rounded-bottom shadow-sm'>
                 <h2>
                     <Link to={`/show-book/${book._id}`}>{book.name}</Link>
                 </h2>

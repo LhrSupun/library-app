@@ -72,9 +72,9 @@ function ShowBookDetails(props) {
                         <hr /> <br />
                     </div>
                     <div className='col-md-10 m-auto'>{BookItem}</div>
-                    <div className='col-md-6 m-auto'>
+                    <div className='col-md-10 m-auto'>
                         <Link
-                            to={`/edit-book/${book._id}`}
+                            to={`/edit-book/${id}`}
                             className='btn btn-outline-info btn-lg btn-block'
                         >
                             Edit Book

@@ -10,9 +10,48 @@ const Author = require('../../models/Author');
 exports.index = asyncHandler(async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const perPage = parseInt(req.query.perPage) || 10;
-    const authors = await Author.find()
-        .skip((page - 1) * perPage)
-        .limit(perPage);
+    // const authors = await Author.find()
+    //     .skip((page - 1) * perPage)
+    //     .limit(perPage);
+    const authors = await Author.aggregate([
+        {
+            $lookup: {
+                from: 'books',
+                let: {
+                    author_id: '$_id'
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $eq: ['$author', '$$author_id']
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            name: 1,
+                        }
+                    },
+                ],
+                as: 'books'
+            }
+        },
+        {
+            $project: {
+                first_name: 1,
+                last_name: 1,
+                fullName: { $concat: ['$first_name', ' ', '$last_name'] },
+                books: 1
+            }
+        },
+        {
+            $skip: (page - 1) * perPage
+        },
+        {
+            $limit: perPage
+        }
+    ]);
     res.json(authors);
 });
 
