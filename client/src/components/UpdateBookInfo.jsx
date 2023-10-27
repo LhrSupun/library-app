@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../App.css';
@@ -11,11 +11,12 @@ function UpdateBookInfo(props) {
         description: '',
         authorId: ''
     });
+    
     const [authors, setAuthors] = useState([]);
 
-    const searchAuthor = useCallback((authorId) => {
-        return authors.find(author => author._id === authorId)?.fullName || book.author
-    })
+    // const searchAuthor = useCallback((authorId) => {
+    //     return authors.find(author => author._id === authorId)?.fullName || book.author
+    // })
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -66,7 +67,7 @@ function UpdateBookInfo(props) {
         const data = {
             name: book.name,
             isbn: book.isbn,
-            author: book.author,
+            author: book.authorId,
             description: book.description
         };
 
@@ -131,10 +132,10 @@ function UpdateBookInfo(props) {
                             {authors.length > 0 ? (
                                 <select
                                     className='form-control'
-                                    name='author'
+                                    name='authorId'
                                     onChange={onChange}
                                 >
-                                    <option value="" disabled selected>{searchAuthor(book.author)}</option>
+                                    <option value={book?.authorId} disabled selected>{book?.author}</option>
                                     {authors.map((author) => (
                                         <option key={author?._id} value={author?._id}>
                                             {author?.fullName}
