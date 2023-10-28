@@ -10,7 +10,7 @@ function ShowAuthorsList() {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get('http://localhost:5000/authors?page=1&perPage=20', {
+            .get('/authors?page=1&perPage=20', {
                 signal: controller.signal,
             })
             .then((res) => {
@@ -24,7 +24,7 @@ function ShowAuthorsList() {
     }, []);
 
     const authorsList =
-        authors.length === 0
+        (!Array.isArray(authors) || authors.length === 0)
             ? 'there is no author record!'
             : authors.map((author, k) => <AuthorCard author={author} key={k} />);
 

@@ -21,7 +21,7 @@ const CreateBook = (props) => {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get('http://localhost:5000/authors', {
+            .get('/authors', {
                 signal: controller.signal,
             })
             .then((res) => {
@@ -39,7 +39,7 @@ const CreateBook = (props) => {
         e.preventDefault();
 
         axios
-            .post('http://localhost:5000/book', book)
+            .post('/book', book)
             .then((res) => {
                 setBook({
                     name: '',

@@ -10,7 +10,7 @@ function ShowBookList() {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get('http://localhost:5000/books?page=1&perPage=20', {
+            .get('/books?page=1&perPage=20', {
                 signal: controller.signal,
             })
             .then((res) => {
@@ -24,7 +24,7 @@ function ShowBookList() {
     }, []);
 
     const bookList =
-        books.length === 0
+        (!Array.isArray(books) || books.length === 0)
             ? 'there is no book record!'
             : books.map((book, k) => <BookCard book={book} key={k} />);
 

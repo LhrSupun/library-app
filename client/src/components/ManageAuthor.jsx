@@ -18,7 +18,7 @@ function ManageAuthorInfo(props) {
         if (id) {
             const controller = new AbortController();
             axios
-                .get(`http://localhost:5000/author/${id}`, {
+                .get(`/author/${id}`, {
                     signal: controller.signal
                 })
                 .then(({ data }) => {
@@ -38,7 +38,7 @@ function ManageAuthorInfo(props) {
         setUpdating(true);
         if (id) {
             axios
-                .put(`http://localhost:5000/author/${id}`, author)
+                .put(`/author/${id}`, author)
                 .then((res) => {
                     setAuthor({
                         first_name: "", last_name: ""
@@ -56,7 +56,7 @@ function ManageAuthorInfo(props) {
                 });
         } else {
             axios
-                .post('http://localhost:5000/author', author)
+                .post('/author', author)
                 .then((res) => {
                     setAuthor({
                         first_name: "", last_name: ""

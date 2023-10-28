@@ -24,7 +24,7 @@ function UpdateBookInfo(props) {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get(`http://localhost:5000/book/${id}`, {
+            .get(`/book/${id}`, {
                 signal: controller.signal
             })
             .then(({ data }) => {
@@ -46,7 +46,7 @@ function UpdateBookInfo(props) {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get('http://localhost:5000/authors', {
+            .get('/authors', {
                 signal: controller.signal,
             })
             .then((res) => {
@@ -72,7 +72,7 @@ function UpdateBookInfo(props) {
         };
 
         axios
-            .put(`http://localhost:5000/book/${id}`, data)
+            .put(`/book/${id}`, data)
             .then((res) => {
                 const timer = setTimeout(() => {
                     navigate(`/show-book/${id}`);

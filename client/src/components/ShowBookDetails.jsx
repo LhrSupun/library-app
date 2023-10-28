@@ -12,7 +12,7 @@ function ShowBookDetails(props) {
     useEffect(() => {
         const controller = new AbortController();
         axios
-            .get(`http://localhost:5000/book/${id}`, {
+            .get(`/book/${id}`, {
                 signal: controller.signal,
             })
             .then((res) => {
